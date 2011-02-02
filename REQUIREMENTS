@@ -1,0 +1,6 @@
+http://effbot.org/downloads/Imaging-1.1.6.tar.gz
+django
+django-debug-toolbar
+django-gravatar
+django-paging
+django-treebeard

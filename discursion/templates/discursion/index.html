@@ -1,0 +1,9 @@
+{% extends 'discursion/base.html' %}
+
+{% block title %} | Forums{% endblock %}
+
+{% block content %}
+    {% for forum in forum_list %}
+        {% include "discursion/subforum_list.html" %}
+    {% endfor %}
+{% endblock %}

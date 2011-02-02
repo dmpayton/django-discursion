@@ -1,0 +1,68 @@
+{% extends 'discursion/base.html' %}
+{% load humanize %}
+{% load paging_extras %}
+
+{% block title %} | {{ forum.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {% for f in forum.get_ancestors %}
+        <span class="sep">&rsaquo;</span>
+        <a href="{{ f.get_absolute_url }}">{{ f.name }}</a>
+    {% endfor %}
+    <span class="sep">&rsaquo;</span>
+    <span>{{ forum.name }}</span>
+{% endblock %}
+
+{% block content %}
+{% if forum.get_children_count %}
+    {% include "discursion/subforum_list.html" %}
+{% endif %}
+
+{% if not forum.is_root %}
+<div class="row">
+    <div class="column grid_12">
+        <h3 class="bold">{{ forum.name }}</h3>
+    </div>
+    <div class="column grid_4 right">
+        <a href="{{ forum.get_new_thread_url }}">[new thread]</a>
+    </div>
+</div>
+
+{% paginate forum.threads from request as results per_page 2 %}
+{{ results.paging }}
+
+<table class="main threads">
+    <tr>
+        <th class="thread">Threads</th>
+        <th class="stats right">Stats</th>
+        <th class="last_post">Latest Activity</th>
+    </tr>
+    {% for thread in results.objects %}
+        <tr class="{% cycle 'primary' 'secondary' %}">
+            <td class="thread">
+                {% if thread.is_announcement %}<span class="small bold">[ANN]</span>{% endif %}
+                {% if thread.is_sticky %}<span class="small bold">[S]</span>{% endif %}
+                {% if thread.is_closed %}<span class="small bold">[C]</span>{% endif %}
+                <a href="{{ thread.get_absolute_url }}" class="name">{{ thread.name }}</a><br />
+                <span class="small">Posted by <a href="#">{{ thread.author.username }}</a></span>
+            </td>
+            <td class="stats small">
+                <span>{{ thread.post_count|intcomma }} Replies</span><br />
+                <span class="quiet">{{ thread.view_count|intcomma }} Views</span>
+            </td>
+            <td class="last_post small">
+                <span class="date">{{ thread.last_post.created_on|timesince }} ago<br />
+                <b>By:</b> <a href="{{ thread.author.get_absolute_url }}">{{ thread.last_post.author.username }}</a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr class="primary">
+            <td colspan="3" class="center italic">No threads have been posted here.</td>
+        </tr>
+    {% endfor %}
+</table>
+
+{{ results.paging }}
+{% endif %}
+
+{% endblock %}

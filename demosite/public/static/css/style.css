@@ -1,0 +1,341 @@
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+    margin: 0;
+    padding: 0;
+    border: 0;
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+    display: block;
+}
+
+a {
+    color: #292b2c;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+body {
+    background: #fff;
+    color: #334;
+    font: .9em Helvetica, Arial, sans-serif;
+    line-height: 1.4;
+    margin: 0px;
+    min-width: 960px;
+    padding: 0px;
+    width: 100%;
+}
+
+h1, h2, h3, h4, h5, h6, ul, li, em, strong, pre, code {
+    font-weight: normal;
+    font-style: normal;
+    line-height: normal;
+    margin: 0px;
+    padding: 0px;
+}
+
+h1, h2, h3, h4 { font-family: 'Ubuntu', sans-serif; }
+h1 { color: #104566; font-size: 1.8em; margin-bottom: .8em; }
+h2 { color: #346786; font-size: 1.5em; margin-bottom: .6em; }
+h3 { font-size: 1.2em; margin-bottom: .4em; }
+h4 { font-size: 1em; margin-bottom: .2em;}
+h5 { font-size: 1em; }
+h6 { font-size: 1em; }
+
+hr { margin: 20px 0; }
+
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-size: inherit;
+    font: 100%;
+}
+
+/*textarea {
+    font-family: Helvetica, Arial, sans-serif;
+}*/
+
+ul {
+    list-style: none;
+}
+
+img {
+    border: 0;
+    vertical-align: text-bottom;
+}
+
+p {
+    margin: 1em 0;
+}
+
+.clear { clear: both; }
+
+
+/*========================================
+  The 1Kb Grid - http://www.1kbgrid.com/
+  16 columns, 40 pixels each, with 20 pixel gutter
+  ========================================*/
+
+.grid_1 { width:40px; }
+.grid_2 { width:100px; }
+.grid_3 { width:160px; }
+.grid_4 { width:220px; }
+.grid_5 { width:280px; }
+.grid_6 { width:340px; }
+.grid_7 { width:400px; }
+.grid_8 { width:460px; }
+.grid_9 { width:520px; }
+.grid_10 { width:580px; }
+.grid_11 { width:640px; }
+.grid_12 { width:700px; }
+.grid_13 { width:760px; }
+.grid_14 { width:820px; }
+.grid_15 { width:880px; }
+.grid_16 { width:940px; }
+
+.column {
+	margin: 0 10px;
+	overflow: hidden;
+	float: left;
+	display: inline;
+}
+.row {
+	width: 960px;
+	margin: 0 auto;
+	overflow: hidden;
+}
+.row .row {
+	margin: 0 -10px;
+	width: auto;
+	display: inline-block;
+}
+
+/*==============================
+  Common Styling Elements
+  ==============================*/
+
+b, strong, .bold { font-weight: bold !important; }
+i, em, .italic { font-style: italic !important; }
+s, .strike { text-decoration: line-through !important; }
+u, .underline { text-decoration: underline !important; }
+
+.left { text-align: left !important; }
+.center { text-align: center !important; }
+.right { text-align: right !important; }
+
+.quiet { color: #777 !important; }
+.small { font-size: .8em !important; }
+.x-small { font-size: .6em !important; }
+
+/*========================================
+  Form styling
+  ========================================*/
+
+table.form {
+    border: #ccc 1px solid;
+    border-collapse: separate;
+    border-spacing: 1px;
+    width: 100%;
+}
+
+table.form thead th {
+    background: #ddd;
+    font: 1.1em 'Ubuntu';
+    text-align: left;
+}
+
+table.form th {
+    background: #f0f0f0;
+	color: #666;
+	font-weight: bold;
+    padding: 5px;
+	text-align: right;
+	vertical-align: top;
+	width: 150px;
+}
+
+table.form td {
+    background: #f6f6f6;
+    padding: 5px;
+}
+
+table.form td {
+	vertical-align: top;
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+	background: #fff;
+	border: #eee 2px inset;
+	font-family: Helvetica, Arial, sans-serif;
+	padding: 5px;
+	width: 300px;
+}
+
+/*========================================
+  Generic table styling
+  ========================================*/
+
+table.main {
+    background: #fff;
+    border: #ccc 1px solid;
+    border-collapse: separate;
+    border-spacing: 1px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+
+table.main th {
+    background: #ddd;
+	border-bottom: #ccc 1px solid;
+    font-family: 'Ubuntu';
+    padding: 5px 5px 4px 5px;
+}
+
+table.main tr.primary > td {
+    background: #f0f0f0;
+    padding: 5px;
+}
+table.main tr.secondary > td {
+    background: #f6f6f6;
+    padding: 5px;
+}
+
+
+
+/*========================================
+  General Styling
+  ========================================*/
+
+a {
+    color: #069;
+}
+
+body {
+    background: #eee;
+    color: #333;
+    margin: 10px 0px;
+}
+
+body > .row {
+    background: #fff;
+}
+
+header, footer {
+    padding: 10px 0px;
+}
+
+header a:hover {
+    text-decoration: none;
+}
+
+header h1 {
+    margin: 0px;
+}
+
+#breadcrumb {
+	background: #f6f6f6;
+	border: #eee 1px solid;
+	margin-bottom: 10px;
+	padding: 5px;
+}
+
+
+/*========================================
+  Subforum list
+  ========================================*/
+
+table.forums th.forum {
+    text-align: left;
+    width: 60%;
+}
+
+table.forums th.stats {
+    width: 15%;
+}
+
+table.forums th.last_post {
+    width: 25%;
+}
+
+table.forums td.forum {
+	vertical-align: middle;
+}
+
+table.forums td.forum a.name {
+    font-weight: bold;
+}
+
+table.forums td.stats {
+    text-align: right;
+    vertical-align: middle;
+}
+
+/*========================================
+  Forum detail
+  ========================================*/
+
+table.threads th.thread {
+    text-align: left;
+    width: 60%;
+}
+
+table.threads th.stats {
+    width: 15%;
+}
+
+table.threads th.last_post {
+    width: 25%;
+}
+
+table.threads td.thread a.name {
+    font-weight: bold;
+}
+
+table.threads td.stats {
+    text-align: right;
+    vertical-align: middle;
+}
+
+/*========================================
+  Thread detail
+  ========================================*/
+
+.posts .primary { background: #f0f0f0; }
+.posts .secondary { background: #f6f6f6; }
+.posts .padding { padding: 5px; }
+
+.posts .gravatar {
+	background: #fff;
+	border: #ddd 1px solid;
+	padding: 1px;
+}
+
+.posts .meta {
+	background: #ddd;
+	border-bottom: #ccc 1px solid;
+}

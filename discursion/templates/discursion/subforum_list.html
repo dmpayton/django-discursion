@@ -1,0 +1,31 @@
+{% load humanize %}
+<table class="main forums">
+    <tr>
+        <th class="forum">{{ forum.name }}</th>
+        <th class="stats right">Stats</th>
+        <th class="last_post">Latest Activity</th>
+    </tr>
+    {% for subforum in forum.get_children %}
+        <tr class="{% cycle 'primary' 'secondary' %}">
+            <td class="forum">
+                <a href="{{ subforum.get_absolute_url }}" class="name">{{ subforum.name }}</a>
+                {% if subforum.description %}
+                <br /><span>{{ subforum.description|urlize|linebreaksbr }}</span>
+                {% endif %}
+            </td>
+            <td class="stats small">
+                <span>{{ subforum.thread_count|intcomma }} Threads</span><br />
+                <span>{{ subforum.post_count|intcomma }} Posts</span>
+            </td>
+            <td class="last_post small">
+                {% if subforum.last_thread %}
+                    <span class="date">{{ subforum.last_thread.last_post.created_on|timesince }} ago<br />
+                    <b>In:</b> <a href="{{ subforum.last_thread.get_absolute_url }}">{{ subforum.last_thread.name }}</a><br />
+                    <b>By:</b> <a href="{{ subforum.last_thread.last_post.author.get_absolute_url }}">{{ subforum.last_thread.last_post.author.username }}</a>
+                {% else %}
+                    <span class="no_activity">No activity</span>
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</table>
