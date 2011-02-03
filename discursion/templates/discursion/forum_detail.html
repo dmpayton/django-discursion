@@ -1,6 +1,6 @@
 {% extends 'discursion/base.html' %}
 {% load humanize %}
-{% load paging_extras %}
+{% load pagination_tags %}
 
 {% block title %} | {{ forum.name }}{% endblock %}
 
@@ -15,7 +15,7 @@
 
 {% block content %}
 {% if forum.get_children_count %}
-    {% include "discursion/subforum_list.html" %}
+    {% include "discursion/subforum_include.html" %}
 {% endif %}
 
 {% if not forum.is_root %}
@@ -28,16 +28,15 @@
     </div>
 </div>
 
-{% paginate forum.threads from request as results per_page 2 %}
-{{ results.paging }}
-
+{% with forum.threads as thread_list %}
+{% autopaginate thread_list %}
 <table class="main threads">
     <tr>
         <th class="thread">Threads</th>
         <th class="stats right">Stats</th>
         <th class="last_post">Latest Activity</th>
     </tr>
-    {% for thread in results.objects %}
+    {% for thread in thread_list %}
         <tr class="{% cycle 'primary' 'secondary' %}">
             <td class="thread">
                 {% if thread.is_announcement %}<span class="small bold">[ANN]</span>{% endif %}
@@ -61,8 +60,8 @@
         </tr>
     {% endfor %}
 </table>
-
-{{ results.paging }}
+{% paginate %}
+{% endwith %}
 {% endif %}
 
 {% endblock %}

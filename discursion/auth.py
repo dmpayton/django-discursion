@@ -11,28 +11,20 @@ class DiscursionPermissionBackend(ModelBackend):
         return None
 
     def has_perm(self, user_obj, perm, obj=None):
-        #try:
-        #    perm = perm.split('.')[-1]
-        #except IndexError:
-        #    return False
-
         ## Forum permissions
         if isinstance(obj, Forum):
-            if self._user_can_moderate(user_obj, obj):
-                return True
-
-
+            pass
 
         ## Thread permissions
         if isinstance(obj, Thread):
-            if self._user_can_moderate(user_obj, obj.forum):
+            if obj.forum.permissions.user_is_moderator(user_obj):
                 return True
 
             if user_obj.is_authenticated():
                 return False
 
         if isinstance(obj, Post):
-            if self._user_can_moderate(user_obj, obj.thread.forum):
+            if obj.forum.permissions.user_is_moderator(user):
                 return True
 
         return False
@@ -45,11 +37,3 @@ class DiscursionPermissionBackend(ModelBackend):
             if forum.permissions.anon_can_read is None:
                 return ALLOW_ANON_READ
             return forum.permissions.anon_can_read
-
-    def _can_moderate_forum(self, user, forum):
-        if user.has_perm('discursion.moderate_forum'):
-            ## User is essentially a global moderator
-            return True
-        ## If the user is in a group that has moderator permissions on any
-        ## ancestor, the user is a moderator od that forums.
-        return forum.get_ancestors().filter(_permissions__groups_can_moderate=u.groups.all()).exists()

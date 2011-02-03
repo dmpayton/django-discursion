@@ -1,5 +1,5 @@
 from discursion.models import Forum, ForumPermissions, Thread, Post
-from discursion.settings import ALLOW_ANON_READ, ALLOW_ANON_POST
+from discursion.settings import DEFAULT_ANON_READ, DEFAULT_ANON_WRITE
 from django import forms
 from django.contrib import admin
 from django.template.defaultfilters import yesno
@@ -12,14 +12,14 @@ class ForumPermissionsForm(forms.ModelForm):
         def update_anon_choices(field, default):
             self.fields[field].widget.choices = [[k, v] for k, v in self.fields[field].widget.choices]
             self.fields[field].widget.choices[0][1] = 'Use default (%s)' % yesno(default)
-        update_anon_choices('anon_can_read', ALLOW_ANON_READ)
-        update_anon_choices('anon_can_post', ALLOW_ANON_POST)
+        update_anon_choices('anon_can_read', DEFAULT_ANON_READ)
+        update_anon_choices('anon_can_post', DEFAULT_ANON_WRITE)
 
     class Meta:
         model = ForumPermissions
 
 class ForumPermissionsInline(admin.StackedInline):
-    filter_horizontal = ('user_groups', 'moderate_groups')
+    filter_horizontal = ('read_groups', 'write_groups', 'moderate_groups')
     form = ForumPermissionsForm
     model = ForumPermissions
 

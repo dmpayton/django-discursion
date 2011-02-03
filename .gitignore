@@ -2,3 +2,4 @@
 .DS_Store
 django-discursion.komodoproject
 demosite/database.sqlite
+demosite/discursion

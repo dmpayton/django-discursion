@@ -1,13 +1,12 @@
 from discursion.managers import ForumManager, PostManager
 from discursion.render_backends import get_render_backend
+from discursion.settings import RENDER_BACKEND
 from discursion.signals import new_post
 from django.conf import settings
 from django.contrib.auth.models import User, Group
 from django.db import models
 from django.db.models import F, Q
 from treebeard.mp_tree import MP_Node
-
-RENDER_BACKEND = getattr(settings, 'DISCURSION_RENDER_BACKEND', 'discursion.renderers.Simple')
 
 class Forum(MP_Node):
     name = models.CharField(max_length=100)
@@ -53,7 +52,7 @@ class Forum(MP_Node):
 
     @property
     def threads(self):
-        return Thread.objects.filter(Q(forum=self)|Q(is_announcement=True)).order_by('-is_announcement', '-is_sticky', '-created_on')
+        return Thread.objects.filter(Q(forum=self)|Q(is_announcement=True)).select_related('author', 'last_thread').order_by('-is_announcement', '-is_sticky', 'created_on')
 
 class ForumPermissions(models.Model):
     forum = models.OneToOneField(Forum, related_name='_permissions')
@@ -61,11 +60,46 @@ class ForumPermissions(models.Model):
     anon_can_read = models.NullBooleanField(default=None)
     anon_can_post = models.NullBooleanField(default=None)
 
-    user_groups = models.ManyToManyField(Group, related_name='user_forums', blank=True, null=True)
-    moderate_groups = models.ManyToManyField(Group, related_name='moderate_forums', blank=True, null=True)
+    read_groups = models.ManyToManyField(Group, related_name='read_forums', help_text='No groups selected gives read access to all groups.', blank=True, null=True)
+    write_groups = models.ManyToManyField(Group, related_name='write_forums', help_text='No groups selected gives write access to all groups.', blank=True, null=True)
+    moderate_groups = models.ManyToManyField(Group, related_name='moderate_forums', help_text='This is in addition to global moderators.', blank=True, null=True)
 
     def __unicode__(self):
         return unicode(self.forum)
+
+    def user_can_read(self, user):
+        if user.is_superuser or self.user_can_moderate(user):
+            return True
+        if self.forum.is_hidden:
+            ## Hidden forums are only viewable by moderators, regardless of read perms
+            return False
+        ## if we have specified read groups, enforce 'em
+        if self.read_groups.count():
+            return ForumPermission.objects.filter(forum=self.forum, read_groups=u.groups.all()).exists()
+        return True
+
+    def user_can_read(self, user):
+        if user.is_superuser or self.user_can_moderate(user):
+            return True
+        if self.forum.is_hidden or forum.is_closed:
+            ## Hidden/closed forums are only writable by moderators, regardless of write perms
+            return False
+        ## if we have specified read groups, enforce 'em
+        if self.write_groups.count():
+            return ForumPermission.objects.filter(forum=self.forum, write_groups=u.groups.all()).exists()
+        return True
+
+    def user_can_moderate(self, user):
+        ## Check if the user is a global moderator
+        if user.has_perm('discursion.global_moderator'):
+            return True
+        ## Explicit moderator groups on this forum
+        if self.moderate_groups.count():
+            return ForumPermission.objects.filter(forum=self.forum, moderate_groups=u.groups.all()).exists()
+        ## If the user is in a group that has moderator permissions on any
+        ## ancestor, the user is a moderator of that forums.
+        #return self.forum.get_ancestors().filter(_permissions__moderate_groups=u.groups.all()).exists()
+        return False # CONSIDER: Do we want moderator perms to trickle down?
 
 
 class Thread(models.Model):
@@ -80,6 +114,7 @@ class Thread(models.Model):
     is_closed = models.BooleanField(default=False)
     is_announcement = models.BooleanField(default=False)
     is_sticky = models.BooleanField(default=False)
+    is_deleted = models.BooleanField(default=False)
 
     view_count = models.IntegerField(default=0)
     post_count = models.IntegerField(default=0)
@@ -104,7 +139,7 @@ class Thread(models.Model):
 
     @property
     def posts(self):
-        return Post.objects.filter(thread=self).order_by('created_on')
+        return Post.objects.filter(thread=self).select_related('author', 'thread').order_by('created_on')
 
 class Post(models.Model):
     thread = models.ForeignKey(Thread, related_name='_posts')
@@ -126,11 +161,11 @@ class Post(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('discursion:post_detail', (self.pk,))
+        return ('discursion:post_detail', (self.thread.pk, self.thread.slug, self.pk,))
 
     def render_message(self):
         render = get_render_backend(RENDER_BACKEND)
-        self.message_rendered = render(seld.message)
+        self.message_rendered = render(self.message)
 
 
 def increment_stats(sender, post, new_thread=False, **kwargs):

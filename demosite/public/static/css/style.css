@@ -192,6 +192,7 @@ textarea {
 	background: #fff;
 	border: #eee 2px inset;
 	font-family: Helvetica, Arial, sans-serif;
+    font-size: 100%;
 	padding: 5px;
 	width: 300px;
 }
@@ -266,6 +267,16 @@ header h1 {
 
 
 /*========================================
+  Pagination style
+  ========================================*/
+
+.pagination {
+    margin-bottom: 10px;
+    text-align: right;
+}
+
+
+/*========================================
   Subforum list
   ========================================*/
 
@@ -325,10 +336,6 @@ table.threads td.stats {
   Thread detail
   ========================================*/
 
-.posts .primary { background: #f0f0f0; }
-.posts .secondary { background: #f6f6f6; }
-.posts .padding { padding: 5px; }
-
 .posts .gravatar {
 	background: #fff;
 	border: #ddd 1px solid;
@@ -336,6 +343,29 @@ table.threads td.stats {
 }
 
 .posts .meta {
-	background: #ddd;
-	border-bottom: #ccc 1px solid;
+    width: 25%;
+}
+
+.posts .message {
+    vertical-align: top;
+}
+
+.posts .post {
+    padding: 10px 0px;
+}
+
+.posts .timestamp {
+    border-bottom: #ddd 1px solid;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+}
+
+.posts .permalink {
+    border-top: #ddd 1px solid;
+    margin-top: 5px;
+    padding-top: 5px;
+}
+
+.quick-reply {
+    margin-top: 10px;
 }

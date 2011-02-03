@@ -1,0 +1,21 @@
+{% extends 'discursion/base.html' %}
+
+{% block title %} | {{ thread.name }}{% endblock %}
+
+{% block breadcrumb %}
+    {% for f in thread.forum.get_ancestors %}
+        <span class="sep">&rsaquo;</span>
+        <a href="{{ f.get_absolute_url }}">{{ f.name }}</a>
+    {% endfor %}
+    <span class="sep">&rsaquo;</span>
+    <a href="{{ thread.forum.get_absolute_url }}">{{ thread.forum.name }}</a>
+    <span class="sep">&rsaquo;</span>
+    <a href="{{ thread.get_absolute_url }}">{{ thread.name }}</a>
+{% endblock %}
+
+{% block content %}
+<h3 class="bold"><a href="{{ thread.get_absolute_url }}">{{ thread.name }}</a></h3>
+<div class="posts">
+    {% include "discursion/post_include.html" %}
+</div>
+{% endblock %}

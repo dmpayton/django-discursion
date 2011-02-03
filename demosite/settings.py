@@ -53,6 +53,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'pagination.middleware.PaginationMiddleware',
 )
 
 INSTALLED_APPS = (
@@ -66,7 +67,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'discursion',
     'gravatar',
-    'paging',
+    'pagination',
     'treebeard',
 )
 

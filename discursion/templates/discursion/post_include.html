@@ -1,0 +1,19 @@
+{% load gravatar_tags %}
+<table class="main">
+    <tr>
+        <th class="meta center">
+            <a class="bold" href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a>
+        </th>
+        <th class="right">[edit] [delete]</th>
+    </tr>
+    <tr class="{% cycle 'primary' 'secondary' %}">
+        <td class="meta center">
+            <img src="{% gravatar_for_user post.author %}" class="gravatar" alt="{{ post.author.username }}'s Gravatar" />
+        </td>
+        <td class="message">
+            <div class="timestamp small">Posted {{ post.created_on|timesince }} ago</div>
+            <div class="post">{{ post.message_rendered|safe }}</div>
+            <div class="permalink small right"><a href="{{ post.get_absolute_url }}">Permalink</a></div>
+        </td>
+    </tr>
+</table>

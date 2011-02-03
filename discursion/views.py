@@ -55,5 +55,11 @@ def add_reply(request, thread_id, slug, template_name=None):
         'form': form,
         }, context_instance=RequestContext(request))
 
-def post_detail(request, post_id):
-    pass
+def post_detail(request, thread_id, slug, post_id, template_name=None):
+    template_name = template_name or 'discursion/post_detail.html'
+    thread = get_object_or_404(Thread, pk=thread_id)
+    post = get_object_or_404(thread.posts, pk=post_id)
+    return render_to_response(template_name, {
+        'thread': thread,
+        'post': post,
+        }, context_instance=RequestContext(request))

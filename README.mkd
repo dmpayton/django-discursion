@@ -1,9 +1,10 @@
+
 # Discursion
 A simple, pluggable, no-frills forum app for Django.
 
 ***This project is still very much in early development and is far from ready for production use.***
 
-The majority of forum apps tend towards comprehensive, monolithic solutions. Discursion aims to be the opposite, to do one thing (forums, baby!) and do it well, with minimal setup. This means there is no custom auth backend, no user management, no private messages, no avatar support, and no support for other cruft usually included with forums. There are existing apps that already do those things, thus they are outside the scope of Discursion. (Django-gravatar is only included as an example and because it's so easy to use.)
+The majority of forum apps tend towards comprehensive, monolithic solutions. Discursion aims to be the opposite, to do one thing (forums, baby!) and do it well, with minimal setup. This means there is no custom auth backend, no user management, no private messages, no signature, no avatar support, etc. There are existing apps that already do those things, thus they are outside the scope of Discursion. (Django-gravatar is only included as an example and because it's so easy to use.)
 
  * **Author**: Derek Payton ([http://www.dmpayton.com])
  * **Version**: Alpha
@@ -11,25 +12,28 @@ The majority of forum apps tend towards comprehensive, monolithic solutions. Dis
 
 ***Requirements:***
 
- * Django 1.2-ish (untested with 1.1)
+ * Django 1.2
  * django-gravatar
  * django-haystack
- * django-paging
+ * django-pagination
  * django-treebeard
 
 ***Goal Features:***
 
  * General
-  * Search via django-haystack
+  * Migrationes (south)
+  * Search (django-haystack)
  * Forums
   * Unlimited Hierarchy
   * Object-level Permissions
-     * Hidden (Readable by global moderators only)
-     * Closed (Writable by global moderators only)
+     * Hidden (Readable by moderators only)
+     * Closed (Writable by moderators only)
      * Read Groups - Read threads in forum (None selected == available to all)
      * Write Groups - New Thread/Add Reply (None selected == use Read Groups)
+     * Moderator Groups
      * Anonymous Read
      * Anonymous Post
+  * Private Forums (via permissions)
  * Threads
   * Quick Reply
   * Admin tools
@@ -48,8 +52,11 @@ The majority of forum apps tend towards comprehensive, monolithic solutions. Dis
      * Markdown (via markdown)
      * Textile (via textile)
      * ReStructured Text (via docutils)
+   * WYSIWYG via http://markitup.jaysalvat.com/
+   * Preview before submit
 
 ***Maybe Features:***
+
  * Polls
  * Emoticons (django-smileys)
  * Forum RSS feed
