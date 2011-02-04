@@ -1,5 +1,5 @@
-
 # Discursion
+
 A simple, pluggable, no-frills forum app for Django.
 
 ***This project is still very much in early development and is far from ready for production use.***
@@ -24,40 +24,45 @@ The majority of forum apps tend towards comprehensive, monolithic solutions. Dis
     * Migrationes (south)
     * Search (django-haystack)
 * Forums
-    * Unlimited Hierarchy
-    * Object-level Permissions
-       * Hidden (Readable by moderators only)
-       * Closed (Writable by moderators only)
-       * Read Groups - Read threads in forum (None selected == available to all)
-       * Write Groups - New Thread/Add Reply (None selected == use Read Groups)
-       * Moderator Groups
-       * Anonymous Read
-       * Anonymous Post
-    * Private Forums (via permissions)
+    * Unlimited hierarchy
+    * Object-level permissions
+        * Hidden (Readable by moderators only)
+        * Closed (Writable by moderators only)
+        * Anonymous permissions
+            * Read forum
+            * Create thread
+            * Add reply
+        * Group permissions
+            * Read forum (None selected == available to all)
+            * Create thread (None selected == use read forum permission)
+            * Add reply (None selected == use create thread permission)
+            * Forum moderator
+    * Private forums (via permissions)
+    * Paginated threads
 * Threads
-    * Quick Reply
+    * Quick reply
     * Admin tools
         * Announcements (Stick to the top of all forums)
         * Sticky (Stick to the top of thread.forum)
         * Closed (Only moderators may reply)
         * Delete
-    * Pagination
+    * Paginated posts
 * Posts
     * Admin tools
         * Edit
         * Delete
-    * Configurable Markup Renderers, defined in settings
+    * Configurable markup renderers, defined in settings
         * Simple (urlize, linebreaksbr) [default]
         * BBCode (via postmarkup)
         * Markdown (via markdown)
         * Textile (via textile)
         * ReStructured Text (via docutils)
-    * WYSIWYG via http://markitup.jaysalvat.com/
-    * Preview before submit (markitup supports this)
+    * WYSIWYG via MarkitUp -- http://markitup.jaysalvat.com/
+    * Preview before submit (MarkItUp supports this)
 
-***Maybe Features:***
+***Maybe Features (eventually):***
 
-* Polls
+* Thread polls
 * Emoticons (django-smileys)
 * Forum RSS feed
 * Thread RSS feed
@@ -66,7 +71,7 @@ The majority of forum apps tend towards comprehensive, monolithic solutions. Dis
 
 Here are some suggested solutions to commonly requested features
 
-* User Registration
+* User registration
     * django-registration
 * Profiles
     * django-profiles
@@ -74,4 +79,4 @@ Here are some suggested solutions to commonly requested features
     * django-avatars
     * django-gravatar
 * Emoticons
-    * django-smileys (possible candidate for inclusion)
+    * django-smileys (possible candidate for inclusion?)
