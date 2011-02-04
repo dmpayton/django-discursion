@@ -4,3 +4,7 @@ django-debug-toolbar
 django-gravatar
 django-pagination
 django-treebeard
+docutils
+markdown
+postmarkup
+textile

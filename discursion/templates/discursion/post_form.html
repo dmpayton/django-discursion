@@ -12,15 +12,25 @@
     <span class="sep">&rsaquo;</span>
     <a href="{{ thread.get_absolute_url }}">{{ thread.name }}</a>
     <span class="sep">&rsaquo;</span>
-    <span>Add Reply</span>
+    {% if post %}
+        <span>Edit Post</span>
+    {% else %}
+        <span>Add Reply</span>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-<form action="{{ thread.get_add_reply_url }}" method="post">{% csrf_token %}
+<form action="{{ request.path }}" method="post">{% csrf_token %}
     <table class="form">
         <thead>
             <tr>
-                <th colspan="2"><b>Add Reply:</b> {{ thread.name }}</th>
+                <th colspan="2">
+                    {% if post %}
+                        <b>Edit Post:</b> {{ thread.name }}
+                    {% else %}
+                        <b>Add Reply:</b> {{ thread.name }}
+                    {% endif %}
+                </th>
             </tr>
         </thead>
         {{ form.as_table }}

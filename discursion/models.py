@@ -156,8 +156,12 @@ class Thread(models.Model):
         return ('discursion:thread_detail', (self.pk, self.slug,))
 
     @models.permalink
-    def get_add_reply_url(self):
-        return ('discursion:new_post', (self.pk, self.slug,))
+    def get_edit_url(self):
+        return ('discursion:edit_thread', (self.pk, self.slug,))
+
+    @models.permalink
+    def get_reply_url(self):
+        return ('discursion:delete_thread', (self.pk, self.slug,))
 
     @property
     def posts(self):
@@ -186,7 +190,11 @@ class Post(models.Model):
         return ('discursion:post_detail', (self.thread.pk, self.thread.slug, self.pk,))
 
     @models.permalink
-    def get_delete_post_url(self):
+    def get_edit_url(self):
+        return ('discursion:edit_post', (self.thread.pk, self.thread.slug, self.pk,))
+
+    @models.permalink
+    def get_delete_url(self):
         return ('discursion:delete_post', (self.thread.pk, self.thread.slug, self.pk,))
 
     def render_message(self):

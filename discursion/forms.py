@@ -14,6 +14,8 @@ class ThreadForm(forms.ModelForm):
         self._request = kwargs.pop('request', None)
         self._forum = kwargs.pop('forum', None)
         super(ThreadForm, self).__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields['message'].initial = self.instance.first_post.message
         ## if request.user.has_perm('discursion.forum_moderator', forum):
         ##     self.fields.is_sticky, is closed
         ## if request.user.has_perm('discursion.global_moderator'):
@@ -35,6 +37,7 @@ class ThreadForm(forms.ModelForm):
                 message=self.cleaned_data['message'],
                 first_post=True
                 )
+            thread.save()
         else:
             thread.first_post.message = self.cleaned_data['message']
             thread.first_post.render_message()
@@ -64,4 +67,4 @@ class PostForm(forms.ModelForm):
             self.instance.message = self.cleaned_data['message']
             self.instance.render_message()
             self.instance.save()
-        return post
+            return self.instance

@@ -9,8 +9,8 @@
         </th>
         <th class="right">
             {% forumperm edit_post request.user post %}
-                <a href="{{ post.get_edit_post_url }}">[edit]</a>
-                <a href="{{ post.get_delete_post_url }}">[delete]</a>
+                <a href="{{ post.get_edit_url }}">[edit]</a>
+                <a href="{{ post.get_delete_url }}">[delete]</a>
             {% endforumperm %}
         </th>
     </tr>

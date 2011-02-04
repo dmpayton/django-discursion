@@ -10,15 +10,27 @@
     <span class="sep">&rsaquo;</span>
     <a href="{{ forum.get_absolute_url }}">{{ forum.name }}</a>
     <span class="sep">&rsaquo;</span>
-    <span>New Thread</span>
+    {% if thread %}
+        <a href="{{ thread.get_absolute_url }}">{{ thread.name }}</a>
+        <span class="sep">&rsaquo;</span>
+        <span>Edit Thread</span>
+    {% else %}
+        <span>New Thread</span>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-<form action="{{ forum.get_new_thread_url }}" method="post">{% csrf_token %}
+<form action="{{ request.path }}" method="post">{% csrf_token %}
     <table class="form">
         <thead>
             <tr>
-                <th colspan="2"><b>New Thread:</b> {{ forum.name }}</th>
+                <th colspan="2">
+                    {% if thread %}
+                        <b>Edit Thread:</b> {{ thread.name }}
+                    {% else %}
+                        <b>New Thread:</b> {{ forum.name }}
+                    {% endif %}
+                </th>
             </tr>
         </thead>
         {{ form.as_table }}

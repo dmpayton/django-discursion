@@ -6,6 +6,8 @@ from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template.context import RequestContext
 
+## Forums
+
 def index(request, template_name=None):
     template_name = template_name or 'discursion/index.html'
     forum_list = Forum.objects.toplevel()
@@ -22,6 +24,8 @@ def forum_detail(request, forum_id, slug, template_name=None):
         }, context_instance=RequestContext(request))
 
 
+# Threads
+
 def new_thread(request, forum_id, slug, template_name=None, thread_form_class=None):
     template_name = template_name or 'discursion/thread_form.html'
     thread_form_class = thread_form_class or ThreadForm
@@ -35,7 +39,7 @@ def new_thread(request, forum_id, slug, template_name=None, thread_form_class=No
         'form': form,
         }, context_instance=RequestContext(request))
 
-def edit_thread(request, thread_id, slug, template_name=None, thread_form_clas=None):
+def edit_thread(request, thread_id, slug, template_name=None, thread_form_class=None):
     template_name = template_name or 'discursion/thread_form.html'
     thread_form_class = thread_form_class or ThreadForm
     thread = get_object_or_404(Thread.objects.select_related('forum', 'author'), pk=thread_id)
@@ -49,6 +53,17 @@ def edit_thread(request, thread_id, slug, template_name=None, thread_form_clas=N
         'forum': thread.forum,
         }, context_instance=RequestContext(request))
 
+
+def delete_thread(request, thread_id, slug):
+    thread = get_object_or_404(Thread.objects.select_related('forum', 'author'), pk=thread_id)
+    if request.user.has_perm('discursion.edit_thread', thread):
+        thread.is_deleted = True
+        thread.save()
+        messages.success(request, 'Your thread has been deleted')
+        return redirect(thread.forum)
+    raise PermissionDenied
+
+
 def thread_detail(request, thread_id, slug, template_name=None):
     template_name = template_name or 'discursion/thread_detail.html'
     thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
@@ -61,6 +76,8 @@ def thread_detail(request, thread_id, slug, template_name=None):
         'reply_form': reply_form
         }, context_instance=RequestContext(request))
 
+
+# Posts
 
 def new_post(request, thread_id, slug, template_name=None):
     template_name = template_name or 'discursion/post_form.html'
@@ -80,6 +97,8 @@ def edit_post(request, thread_id, slug, post_id, template_name=None, post_form_c
     template_name = template_name or 'discursion/post_form.html'
     post_form_class = post_form_class or PostForm
     post = get_object_or_404(Post.objects.select_related('author', 'thread', 'thread__forum'), pk=post_id, thread=thread_id)
+    if post.is_first_post:
+        return redirect(post.thread.get_edit_url())
     form = post_form_class(request.POST or None, instance=post)
     if form.is_valid():
         form.save()
@@ -92,7 +111,6 @@ def edit_post(request, thread_id, slug, post_id, template_name=None, post_form_c
         }, context_instance=RequestContext(request))
 
 
-
 def delete_post(request, thread_id, slug, post_id):
     thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
     post = get_object_or_404(thread.posts, pk=post_id)
@@ -102,6 +120,7 @@ def delete_post(request, thread_id, slug, post_id):
         messages.success(request, 'Your post has been deleted')
         return redirect(thread)
     raise PermissionDenied
+
 
 def post_detail(request, thread_id, slug, post_id, template_name=None):
     template_name = template_name or 'discursion/post_detail.html'
