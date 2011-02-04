@@ -52,8 +52,12 @@ class Forum(MP_Node):
             return ForumPermissions.objects.create(forum=self)
 
     @property
+    def subforums(self):
+        return self.get_children().select_related('last_thread', 'last_thread__first_post', 'last_thread__last_post__author')
+
+    @property
     def threads(self):
-        return Thread.objects.filter(Q(forum=self)|Q(is_announcement=True)).select_related('author', 'last_thread').order_by('-is_announcement', '-is_sticky', 'created_on')
+        return Thread.objects.filter(Q(forum=self)|Q(is_announcement=True)).select_related('author', 'last_post', 'last_post__author').order_by('-is_announcement', '-is_sticky', 'created_on')
 
 class ForumPermissions(models.Model):
     forum = models.OneToOneField(Forum, related_name='_permissions')
@@ -205,7 +209,13 @@ class Post(models.Model):
 def increment_stats(sender, post, new_thread=False, **kwargs):
     ''' Increment thread/post counts and last_post FK's on Post save '''
     print 'caught signal'
-    Thread.objects.filter(pk=post.thread.pk).update(last_post=post, post_count=F('post_count')+1)
+    update_kwargs = {
+        'last_post': post,
+        'post_count': F('post_count')+1
+        }
+    if new_thread:
+        update_kwargs['first_post'] = post
+    Thread.objects.filter(pk=post.thread.pk).update(**update_kwargs)
     forum_kwargs = {
         'last_thread': post.thread,
         'post_count': F('post_count') + 1,

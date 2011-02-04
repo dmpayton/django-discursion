@@ -30,45 +30,40 @@ class DiscursionPermissions(ModelBackend):
             if perm == 'read_forum':
                 if obj.permissions.user_can_moderate(user_obj):
                     return True
-                if obj.permissions.user_can_read(user_obj):
-                    return True
-                return False
+                return obj.permissions.user_can_read(user_obj)
 
             if perm == 'create_thread':
                 if obj.is_root():
                     return False # No threads in root forums
                 if obj.permissions.user_can_moderate(user_obj):
                     return True
-                if obj.permissions.user_can_create_thread(user_obj):
-                    return True
-                return False
+                return obj.permissions.user_can_create_thread(user_obj)
             return False
 
         ## Thread permissions
         if isinstance(obj, Thread):
-            if perm == 'delete_thread':
-                if obj.forum.permissions.user_can_moderate(user_obj):
-                    return True
-                if obj.forum.permissions.user_can_create_thread():
-                    return True
+            if obj.forum.permissions.user_can_moderate(user_obj):
+                return True
+
+            if obj.is_closed or obj.is_deleted:
                 return False
 
+            if perm == 'read_thread':
+                return obj.forum.permissions.user_can_read(user_obj)
+
+            if perm == 'edit_thread':
+                return obj.forum.permissions.user_can_create_thread()
+
             if perm == 'create_post':
-                if obj.forum.permissions.user_can_moderate(user_obj):
-                    return True
-                if all((
-                    obj.forum.permissions.user_can_add_reply(user_obj),
-                    obj.author == user_obj,
-                    not obj.is_closed)):
-                    return True
-                return False
+                return (obj.author == user_obj) and obj.forum.permissions.user_can_add_reply(user_obj)
             return False
 
         ## Post permissions
         if isinstance(obj, Post):
+            if obj.thread.forum.permissions.user_can_moderate(user_obj):
+                return True
+
             if perm == 'edit_post':
-                if obj.thread.forum.permissions.user_can_moderate(user_obj):
-                    return True
                 if all((
                     obj.thread.forum.permissions.user_can_add_reply(user_obj),
                     obj.author == user_obj,

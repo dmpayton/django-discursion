@@ -25,19 +25,17 @@ class ThreadForm(forms.ModelForm):
         kwargs['commit'] = False
         thread = super(ThreadForm, self).save(*args, **kwargs)
         if not self.instance.pk:
-            print 'msg', self.cleaned_data['message']
             ## No PK, it's a new thread
             thread.author = self._request.user
             thread.forum = self._forum
             thread.slug = slugify(thread.name)
             thread.save()
-            thread.first_post = Post.objects.create_post(
+            Post.objects.create_post(
                 request=self._request,
                 thread=thread,
                 message=self.cleaned_data['message'],
                 first_post=True
                 )
-            thread.save()
         else:
             thread.first_post.message = self.cleaned_data['message']
             thread.first_post.render_message()

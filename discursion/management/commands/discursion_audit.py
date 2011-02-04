@@ -8,7 +8,7 @@ class Command(NoArgsCommand):
         def audit_forum(forum):
             thread_count = Thread.objects.filter(forum=forum).count()
             post_count = Post.objects.filter(thread__forum=forum).count()
-            for subforum in forum.subforums.all():
+            for subforum in forum.get_children():
                 subforum_threads, subforum_posts = audit_forum(subforum)
                 thread_count += subforum_threads
                 post_count += subforum_posts

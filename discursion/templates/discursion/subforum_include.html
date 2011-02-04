@@ -5,7 +5,7 @@
         <th class="stats right">Stats</th>
         <th class="last_post">Latest Activity</th>
     </tr>
-    {% for subforum in forum.get_children %}
+    {% for subforum in forum.subforums %}
         <tr class="{% cycle 'primary' 'secondary' %}">
             <td class="forum">
                 <a href="{{ subforum.get_absolute_url }}" class="name">{{ subforum.name }}</a>

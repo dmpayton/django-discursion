@@ -3,7 +3,7 @@ from django.db import models
 
 class ForumManager(models.Manager):
     def toplevel(self):
-        return self.model.get_root_nodes().select_related()
+        return self.model.get_root_nodes()
 
 class PostManager(models.Manager):
     def create_post(self, request, thread, message, first_post=False):
@@ -14,6 +14,7 @@ class PostManager(models.Manager):
             message=message
             )
         if not thread.first_post:
+            first_post = True
             post.is_first_post = True
         post.render_message()
         post.save()
