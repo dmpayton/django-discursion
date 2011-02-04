@@ -46,7 +46,7 @@ class BBCode(BaseRenderer):
         try:
             import postmarkup
         except ImportError:
-            if settings.DEBUG:
+            if not settings.DEBUG:
                 return force_unicode(message)
             raise
         return force_unicode(postmarkup.render_bbcode(message))
@@ -56,7 +56,7 @@ class Textile(BaseRenderer):
         try:
             import textile
         except ImportError:
-            if settings.DEBUG:
+            if not settings.DEBUG:
                 return force_unicode(message)
             raise
         return force_unicode(textile.textile(smart_str(message), encoding='utf-8', output='utf-8'))
@@ -66,7 +66,7 @@ class Markdown(BaseRenderer):
         try:
             import markdown
         except ImportError:
-            if settings.DEBUG:
+            if not settings.DEBUG:
                 return force_unicode(message)
             raise
         return force_unicode(markdown.markdown(smart_str(value)))
@@ -76,7 +76,7 @@ class ReStructuredText(BaseRenderer):
         try:
             from docutils.core import publish_parts
         except ImportError:
-            if settings.DEBUG:
+            if not settings.DEBUG:
                 return force_unicode(message)
         docutils_settings = getattr(settings, 'RESTRUCTUREDTEXT_FILTER_SETTINGS', {})
         parts = publish_parts(source=smart_str(message), writer_name='html4css1', settings_overrides=docutils_settings)

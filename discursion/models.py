@@ -157,11 +157,11 @@ class Thread(models.Model):
 
     @models.permalink
     def get_add_reply_url(self):
-        return ('discursion:add_reply', (self.pk, self.slug,))
+        return ('discursion:new_post', (self.pk, self.slug,))
 
     @property
     def posts(self):
-        return Post.objects.filter(thread=self).select_related('author', 'thread').order_by('created_on')
+        return Post.objects.filter(thread=self).select_related('author', 'thread', 'thread__forum').order_by('created_on')
 
 class Post(models.Model):
     thread = models.ForeignKey(Thread, related_name='_posts')

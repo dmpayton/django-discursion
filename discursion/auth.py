@@ -19,7 +19,7 @@ class DiscursionPermissions(ModelBackend):
         # create_post (thread)
         # edit_post (post)
 
-        ## discursion.perm_check -> perm_check
+        ## "discursion.perm_check" -> "perm_check"
         try:
             perm = perm.split('.')[-1]
         except IndexError:

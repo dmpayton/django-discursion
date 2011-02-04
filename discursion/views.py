@@ -13,6 +13,7 @@ def index(request, template_name=None):
         'forum_list': forum_list
         }, context_instance=RequestContext(request))
 
+
 def forum_detail(request, forum_id, slug, template_name=None):
     template_name = template_name or 'discursion/forum_detail.html'
     forum = get_object_or_404(Forum.objects.select_related(), pk=forum_id)
@@ -20,10 +21,10 @@ def forum_detail(request, forum_id, slug, template_name=None):
         'forum': forum
         }, context_instance=RequestContext(request))
 
-def new_thread(request, forum_id, slug, template_name=None, thread_form_class=None, post_form_class=None):
-    template_name = template_name or 'discursion/new_thread.html'
+
+def new_thread(request, forum_id, slug, template_name=None, thread_form_class=None):
+    template_name = template_name or 'discursion/thread_form.html'
     thread_form_class = thread_form_class or ThreadForm
-    post_form_class = post_form_class or PostForm
     forum = get_object_or_404(Forum, pk=forum_id)
     form = thread_form_class(request.POST or None, request=request, forum=forum)
     if form.is_valid():
@@ -32,6 +33,20 @@ def new_thread(request, forum_id, slug, template_name=None, thread_form_class=No
     return render_to_response(template_name, {
         'forum': forum,
         'form': form,
+        }, context_instance=RequestContext(request))
+
+def edit_thread(request, thread_id, slug, template_name=None, thread_form_clas=None):
+    template_name = template_name or 'discursion/thread_form.html'
+    thread_form_class = thread_form_class or ThreadForm
+    thread = get_object_or_404(Thread.objects.select_related('forum', 'author'), pk=thread_id)
+    form = thread_form_class(request.POST or None, instance=thread)
+    if form.is_valid():
+        thread = form.save()
+        return redirect(thread)
+    return render_to_response(template_name, {
+        'form': form,
+        'thread': thread,
+        'forum': thread.forum,
         }, context_instance=RequestContext(request))
 
 def thread_detail(request, thread_id, slug, template_name=None):
@@ -46,28 +61,37 @@ def thread_detail(request, thread_id, slug, template_name=None):
         'reply_form': reply_form
         }, context_instance=RequestContext(request))
 
-def add_reply(request, thread_id, slug, template_name=None):
-    template_name = template_name or 'discursion/add_reply.html'
+
+def new_post(request, thread_id, slug, template_name=None):
+    template_name = template_name or 'discursion/post_form.html'
     thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
     form = PostForm(request.POST or None, request=request, thread=thread)
     if form.is_valid():
         form.save()
         return redirect(thread)
     return render_to_response(template_name, {
+        'form': form,
         'thread': thread,
         'forum': thread.forum,
-        'form': form,
         }, context_instance=RequestContext(request))
 
-def post_detail(request, thread_id, slug, post_id, template_name=None):
-    template_name = template_name or 'discursion/post_detail.html'
-    thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
-    post = get_object_or_404(thread.posts, pk=post_id)
+
+def edit_post(request, thread_id, slug, post_id, template_name=None, post_form_class=None):
+    template_name = template_name or 'discursion/post_form.html'
+    post_form_class = post_form_class or PostForm
+    post = get_object_or_404(Post.objects.select_related('author', 'thread', 'thread__forum'), pk=post_id, thread=thread_id)
+    form = post_form_class(request.POST or None, instance=post)
+    if form.is_valid():
+        form.save()
+        return redirect(post.thread)
     return render_to_response(template_name, {
+        'form': form,
         'post': post,
-        'thread': thread,
-        'forum': thread.forum
+        'thread': post.thread,
+        'forum': post.thread.forum,
         }, context_instance=RequestContext(request))
+
+
 
 def delete_post(request, thread_id, slug, post_id):
     thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
@@ -78,3 +102,12 @@ def delete_post(request, thread_id, slug, post_id):
         messages.success(request, 'Your post has been deleted')
         return redirect(thread)
     raise PermissionDenied
+
+def post_detail(request, thread_id, slug, post_id, template_name=None):
+    template_name = template_name or 'discursion/post_detail.html'
+    post = get_object_or_404(Post.objects.select_related('author', 'thread', 'thread__forum'), pk=post_id, thread=thread_id)
+    return render_to_response(template_name, {
+        'post': post,
+        'thread': post.thread,
+        'forum': post.thread.forum
+        }, context_instance=RequestContext(request))

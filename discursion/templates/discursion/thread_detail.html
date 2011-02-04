@@ -34,7 +34,7 @@
 <div class="row posts">
     <div class="column grid_16">
         {% with thread.posts as post_list %}
-        {% autopaginate post_list 3 %}
+        {% autopaginate post_list 5 %}
 
         {% for post in post_list %}
             {% include "discursion/post_include.html" %}
