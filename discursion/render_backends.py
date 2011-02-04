@@ -38,8 +38,8 @@ class BaseRenderer(object):
 
 class Simple(BaseRenderer):
     def __call__(self, message):
-        from django.contrib.defaultfilters import linebreaksbr, urlize
-        return force_unicode(urlize(linebreaksbr(message)))
+        from django.template.defaultfilters import linebreaksbr, urlize
+        return force_unicode(urlize(linebreaksbr(message))).strip()
 
 class BBCode(BaseRenderer):
     def __call__(self, message):
@@ -47,9 +47,9 @@ class BBCode(BaseRenderer):
             import postmarkup
         except ImportError:
             if not settings.DEBUG:
-                return force_unicode(message)
+                return force_unicode(message).strip()
             raise
-        return force_unicode(postmarkup.render_bbcode(message))
+        return force_unicode(postmarkup.render_bbcode(message)).strip()
 
 class Textile(BaseRenderer):
     def __call__(self, message):
@@ -57,9 +57,9 @@ class Textile(BaseRenderer):
             import textile
         except ImportError:
             if not settings.DEBUG:
-                return force_unicode(message)
+                return force_unicode(message).strip()
             raise
-        return force_unicode(textile.textile(smart_str(message), encoding='utf-8', output='utf-8'))
+        return force_unicode(textile.textile(smart_str(message), encoding='utf-8', output='utf-8')).strip()
 
 class Markdown(BaseRenderer):
     def __call__(self, message):
@@ -67,9 +67,9 @@ class Markdown(BaseRenderer):
             import markdown
         except ImportError:
             if not settings.DEBUG:
-                return force_unicode(message)
+                return force_unicode(message).strip()
             raise
-        return force_unicode(markdown.markdown(smart_str(value)))
+        return force_unicode(markdown.markdown(smart_str(message))).strip()
 
 class ReStructuredText(BaseRenderer):
     def __call__(self, message):
@@ -77,7 +77,7 @@ class ReStructuredText(BaseRenderer):
             from docutils.core import publish_parts
         except ImportError:
             if not settings.DEBUG:
-                return force_unicode(message)
+                return force_unicode(message).strip()
         docutils_settings = getattr(settings, 'RESTRUCTUREDTEXT_FILTER_SETTINGS', {})
         parts = publish_parts(source=smart_str(message), writer_name='html4css1', settings_overrides=docutils_settings)
-        return force_unicode(parts['fragment'])
+        return force_unicode(parts['fragment']).strip()

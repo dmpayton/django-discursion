@@ -1,23 +1,23 @@
-"""
-This file demonstrates two different styles of tests (one doctest and one
-unittest). These will both pass when you run "manage.py test".
-
-Replace these with more appropriate tests for your application.
-"""
-
+from django.conf import settings
 from django.test import TestCase
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.failUnlessEqual(1 + 1, 2)
+class DiscursionTests(TestCase):
+    def test_markup_renderers(self):
+        ''' Test that the markup renderers work '''
+        from discursion.render_backends import get_render_backend
+        path = 'discursion.render_backends.%s'
 
-__test__ = {"doctest": """
-Another way to test that 1 + 1 is equal to 2.
+        render = get_render_backend(path % 'Simple')
+        self.assertEqual(render('http://www.dmpayton.com'), '<a href="http://www.dmpayton.com" rel="nofollow">http://www.dmpayton.com</a>')
 
->>> 1 + 1 == 2
-True
-"""}
+        render = get_render_backend(path % 'BBCode')
+        self.assertEqual(render('[b]Discursion[/b]'), '<strong>Discursion</strong>')
 
+        render = get_render_backend(path % 'Markdown')
+        self.assertEqual(render('**Discursion**'), '<p><strong>Discursion</strong></p>')
+
+        render = get_render_backend(path % 'Textile')
+        self.assertEqual(render('*Discursion*'), '<p><strong>Discursion</strong></p>')
+
+        render = get_render_backend(path % 'ReStructuredText')
+        self.assertEqual(render('**Discursion**'), '<p><strong>Discursion</strong></p>')
