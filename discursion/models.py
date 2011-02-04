@@ -90,7 +90,7 @@ class ForumPermissions(models.Model):
     @forum_perms_cache
     def user_can_create_thread(self, user):
         ''' Basic create thread permissions, does not take into account moderator or superuser status '''
-        if self.forum.is_hidden or forum.is_closed:
+        if self.forum.is_hidden or self.forum.is_closed:
             return False
         if not user.is_authenticated():
             if self.anon_can_create is None:
