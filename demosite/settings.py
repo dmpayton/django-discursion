@@ -25,8 +25,13 @@ DATABASES = {
         'PORT': '',
     }
 }
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'discursion.auth.DiscursionPermissions',
+)
 
 DISCURSION_RENDER_BACKEND = 'discursion.render_backends.BBCode'
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 ROOT_URLCONF = 'demosite.urls'
@@ -50,10 +55,11 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
     'pagination.middleware.PaginationMiddleware',
+    'discursion.middleware.DiscursionMiddleware',
 )
 
 INSTALLED_APPS = (

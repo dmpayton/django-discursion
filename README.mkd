@@ -6,72 +6,72 @@ A simple, pluggable, no-frills forum app for Django.
 
 The majority of forum apps tend towards comprehensive, monolithic solutions. Discursion aims to be the opposite, to do one thing (forums, baby!) and do it well, with minimal setup. This means there is no custom auth backend, no user management, no private messages, no signature, no avatar support, etc. There are existing apps that already do those things, thus they are outside the scope of Discursion. (Django-gravatar is only included as an example and because it's so easy to use.)
 
- * **Author**: Derek Payton ([http://www.dmpayton.com])
- * **Version**: Alpha
- * **License**: MIT
+* **Author**: Derek Payton ([http://www.dmpayton.com])
+* **Version**: Alpha
+* **License**: MIT
 
 ***Requirements:***
 
- * Django 1.2
- * django-gravatar
- * django-haystack
- * django-pagination
- * django-treebeard
+* Django 1.2
+* django-gravatar
+* django-haystack
+* django-pagination
+* django-treebeard
 
 ***Goal Features:***
 
- * General
-  * Migrationes (south)
-  * Search (django-haystack)
- * Forums
-  * Unlimited Hierarchy
-  * Object-level Permissions
-     * Hidden (Readable by moderators only)
-     * Closed (Writable by moderators only)
-     * Read Groups - Read threads in forum (None selected == available to all)
-     * Write Groups - New Thread/Add Reply (None selected == use Read Groups)
-     * Moderator Groups
-     * Anonymous Read
-     * Anonymous Post
-  * Private Forums (via permissions)
- * Threads
-  * Quick Reply
-  * Admin tools
-     * Announcements (Stick to the top of all forums)
-     * Sticky (Stick to the top of thread.forum)
-     * Closed (Only moderators may reply)
-     * Delete
-  * Pagination
- * Posts
-  * Admin tools
-     * Edit
-     * Delete
-  * Configurable Markup Renderers, defined in settings
-     * Simple (urlize, linebreaksbr) [default]
-     * BBCode (via postmarkup)
-     * Markdown (via markdown)
-     * Textile (via textile)
-     * ReStructured Text (via docutils)
-   * WYSIWYG via http://markitup.jaysalvat.com/
-   * Preview before submit
+* General
+    * Migrationes (south)
+    * Search (django-haystack)
+* Forums
+    * Unlimited Hierarchy
+    * Object-level Permissions
+       * Hidden (Readable by moderators only)
+       * Closed (Writable by moderators only)
+       * Read Groups - Read threads in forum (None selected == available to all)
+       * Write Groups - New Thread/Add Reply (None selected == use Read Groups)
+       * Moderator Groups
+       * Anonymous Read
+       * Anonymous Post
+    * Private Forums (via permissions)
+* Threads
+    * Quick Reply
+    * Admin tools
+        * Announcements (Stick to the top of all forums)
+        * Sticky (Stick to the top of thread.forum)
+        * Closed (Only moderators may reply)
+        * Delete
+    * Pagination
+* Posts
+    * Admin tools
+        * Edit
+        * Delete
+    * Configurable Markup Renderers, defined in settings
+        * Simple (urlize, linebreaksbr) [default]
+        * BBCode (via postmarkup)
+        * Markdown (via markdown)
+        * Textile (via textile)
+        * ReStructured Text (via docutils)
+    * WYSIWYG via http://markitup.jaysalvat.com/
+    * Preview before submit (markitup supports this)
 
 ***Maybe Features:***
 
- * Polls
- * Emoticons (django-smileys)
- * Forum RSS feed
- * Thread RSS feed
+* Polls
+* Emoticons (django-smileys)
+* Forum RSS feed
+* Thread RSS feed
 
 ***Outside of Scope:***
 
 Here are some suggested solutions to commonly requested features
 
- * User Registration
-  * django-registration
- * Profiles
-  * django-profiles
- * Avatars
-  * django-avatars
-  * django-gravatar
- * Emoticons
-  * django-smileys (possible candidate for inclusion)
+* User Registration
+    * django-registration
+* Profiles
+    * django-profiles
+* Avatars
+    * django-avatars
+    * django-gravatar
+* Emoticons
+    * django-smileys (possible candidate for inclusion)

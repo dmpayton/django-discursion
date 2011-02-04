@@ -1,6 +1,7 @@
+from discursion.decorators import forum_perms_cache
 from discursion.managers import ForumManager, PostManager
 from discursion.render_backends import get_render_backend
-from discursion.settings import RENDER_BACKEND
+from discursion.settings import DEFAULT_ANON_READ, DEFAULT_ANON_CREATE, DEFAULT_ANON_REPLY, RENDER_BACKEND
 from discursion.signals import new_post
 from django.conf import settings
 from django.contrib.auth.models import User, Group
@@ -29,7 +30,7 @@ class Forum(MP_Node):
 
     class Meta:
         ordering = ('order',)
-        permissions = (('global_moderator', 'Can moderate all forums'),) ## Global mods
+        permissions = (('global_moderator', 'Global Moderator'),) ## Global mods
 
     def __unicode__(self):
         return unicode(self.name)
@@ -57,39 +58,60 @@ class Forum(MP_Node):
 class ForumPermissions(models.Model):
     forum = models.OneToOneField(Forum, related_name='_permissions')
 
-    anon_can_read = models.NullBooleanField(default=None)
-    anon_can_post = models.NullBooleanField(default=None)
+    anon_can_read = models.NullBooleanField(default=None, help_text='Allow anonymous users to read this forum.')
+    anon_can_create = models.NullBooleanField(default=None, help_text='Allow anonymous users to create new threads in this forum.')
+    anon_can_reply = models.NullBooleanField(default=None, help_text='Allow anonymous users to reply to threads in this forum.')
 
-    read_groups = models.ManyToManyField(Group, related_name='read_forums', help_text='No groups selected gives read access to all groups.', blank=True, null=True)
-    write_groups = models.ManyToManyField(Group, related_name='write_forums', help_text='No groups selected gives write access to all groups.', blank=True, null=True)
+    read_groups = models.ManyToManyField(Group, related_name='read_forum_perms', help_text='No groups selected gives read access to all groups.', blank=True, null=True)
+    create_groups = models.ManyToManyField(Group, related_name='create_thread_perms', help_text='No groups selected gives create thread access to all groups.', blank=True, null=True)
+    reply_groups = models.ManyToManyField(Group, related_name='reply_thread_perms', help_text='No groups selected gives reply access to all groups.', blank=True, null=True)
     moderate_groups = models.ManyToManyField(Group, related_name='moderate_forums', help_text='This is in addition to global moderators.', blank=True, null=True)
 
     def __unicode__(self):
         return unicode(self.forum)
 
+    @forum_perms_cache
     def user_can_read(self, user):
-        if user.is_superuser or self.user_can_moderate(user):
-            return True
+        ''' Basic read permissions, does not take into account moderator or superuser status '''
         if self.forum.is_hidden:
-            ## Hidden forums are only viewable by moderators, regardless of read perms
             return False
-        ## if we have specified read groups, enforce 'em
+        if not user.is_authenticated():
+            if self.anon_can_read is None:
+                return DEFAULT_ANON_READ
+            return self.anon_can_read
         if self.read_groups.count():
             return ForumPermission.objects.filter(forum=self.forum, read_groups=u.groups.all()).exists()
         return True
 
-    def user_can_read(self, user):
-        if user.is_superuser or self.user_can_moderate(user):
-            return True
+    @forum_perms_cache
+    def user_can_create_thread(self, user):
+        ''' Basic create thread permissions, does not take into account moderator or superuser status '''
         if self.forum.is_hidden or forum.is_closed:
-            ## Hidden/closed forums are only writable by moderators, regardless of write perms
             return False
-        ## if we have specified read groups, enforce 'em
-        if self.write_groups.count():
-            return ForumPermission.objects.filter(forum=self.forum, write_groups=u.groups.all()).exists()
+        if not user.is_authenticated():
+            if self.anon_can_create is None:
+                return DEFAULT_ANON_CREATE
+            return self.anon_can_create
+        if self.create_groups.count():
+            return ForumPermission.objects.filter(forum=self.forum, create_groups=u.groups.all()).exists()
         return True
 
+    @forum_perms_cache
+    def user_can_add_reply(self, user):
+        ''' Basic reply permissions, does not take into account moderator or superuser status '''
+        if self.forum.is_hidden or self.forum.is_closed:
+            return False
+        if not user.is_authenticated():
+            if self.anon_can_reply is None:
+                return DEFAULT_ANON_REPLY
+            return self.anon_can_reply
+        if self.reply_groups.count():
+            return ForumPermission.objects.filter(forum=self.forum, reply_groups=u.groups.all()).exists()
+        return True
+
+    @forum_perms_cache
     def user_can_moderate(self, user):
+        ''' Check if the user can moderate this forum. '''
         ## Check if the user is a global moderator
         if user.has_perm('discursion.global_moderator'):
             return True
@@ -162,6 +184,10 @@ class Post(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('discursion:post_detail', (self.thread.pk, self.thread.slug, self.pk,))
+
+    @models.permalink
+    def get_delete_post_url(self):
+        return ('discursion:delete_post', (self.thread.pk, self.thread.slug, self.pk,))
 
     def render_message(self):
         render = get_render_backend(RENDER_BACKEND)

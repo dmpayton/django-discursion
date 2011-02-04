@@ -1,5 +1,7 @@
 from discursion.forms import ThreadForm, PostForm
 from discursion.models import Forum, Thread, Post
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied
 from django.db.models import F
 from django.shortcuts import get_object_or_404, redirect, render_to_response
 from django.template.context import RequestContext
@@ -34,32 +36,45 @@ def new_thread(request, forum_id, slug, template_name=None, thread_form_class=No
 
 def thread_detail(request, thread_id, slug, template_name=None):
     template_name = template_name or 'discursion/thread_detail.html'
-    thread = get_object_or_404(Thread, pk=thread_id)
+    thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
     thread.view_count = F('view_count') + 1
     thread.save()
     reply_form = PostForm(request=request, thread=thread)
     return render_to_response(template_name, {
         'thread': thread,
+        'forum': thread.forum,
         'reply_form': reply_form
         }, context_instance=RequestContext(request))
 
 def add_reply(request, thread_id, slug, template_name=None):
     template_name = template_name or 'discursion/add_reply.html'
-    thread = get_object_or_404(Thread, pk=thread_id)
+    thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
     form = PostForm(request.POST or None, request=request, thread=thread)
     if form.is_valid():
         form.save()
         return redirect(thread)
     return render_to_response(template_name, {
         'thread': thread,
+        'forum': thread.forum,
         'form': form,
         }, context_instance=RequestContext(request))
 
 def post_detail(request, thread_id, slug, post_id, template_name=None):
     template_name = template_name or 'discursion/post_detail.html'
-    thread = get_object_or_404(Thread, pk=thread_id)
+    thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
     post = get_object_or_404(thread.posts, pk=post_id)
     return render_to_response(template_name, {
-        'thread': thread,
         'post': post,
+        'thread': thread,
+        'forum': thread.forum
         }, context_instance=RequestContext(request))
+
+def delete_post(request, thread_id, slug, post_id):
+    thread = get_object_or_404(Thread.objects.select_related('forum'), pk=thread_id)
+    post = get_object_or_404(thread.posts, pk=post_id)
+    if request.user.has_perm('discursion.edit_post', post):
+        post.is_deleted = True
+        post.save()
+        messages.success(request, 'Your post has been deleted')
+        return redirect(thread)
+    raise PermissionDenied

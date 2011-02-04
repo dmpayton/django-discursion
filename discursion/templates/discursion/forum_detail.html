@@ -43,7 +43,7 @@
                 {% if thread.is_sticky %}<span class="small bold">[S]</span>{% endif %}
                 {% if thread.is_closed %}<span class="small bold">[C]</span>{% endif %}
                 <a href="{{ thread.get_absolute_url }}" class="name">{{ thread.name }}</a><br />
-                <span class="small">Posted by <a href="#">{{ thread.author.username }}</a></span>
+                <span class="small">Posted by <a href="{{ user.get_absolute_url }}">{{ thread.author.username }}</a></span>
             </td>
             <td class="stats small">
                 <span>{{ thread.post_count|intcomma }} Replies</span><br />

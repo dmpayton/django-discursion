@@ -1,10 +1,18 @@
+{% load forum_perms %}
 {% load gravatar_tags %}
+
+{% if not post.is_deleted %}
 <table class="main">
     <tr>
         <th class="meta center">
             <a class="bold" href="{{ post.author.get_absolute_url }}">{{ post.author.username }}</a>
         </th>
-        <th class="right">[edit] [delete]</th>
+        <th class="right">
+            {% forumperm edit_post request.user post %}
+                <a href="{{ post.get_edit_post_url }}">[edit]</a>
+                <a href="{{ post.get_delete_post_url }}">[delete]</a>
+            {% endforumperm %}
+        </th>
     </tr>
     <tr class="{% cycle 'primary' 'secondary' %}">
         <td class="meta center">
@@ -17,3 +25,22 @@
         </td>
     </tr>
 </table>
+{% else %}
+<table class="main">
+    <tr>
+        <th class="meta center bold">[deleted]</th>
+        <th class="right">
+            {% forumperm edit_post request.user post %}
+                <a href="{{ post.get_edit_post_url }}">[edit]</a>
+            {% endforumperm %}
+        </th>
+    </tr>
+    <tr class="{% cycle 'primary' 'secondary' %}">
+        <td class="meta center">&nbsp;</td>
+        <td class="message">
+            <div class="timestamp small">Posted {{ post.created_on|timesince }} ago</div>
+            <div class="post center bold">This post has been deleted</div>
+        </td>
+    </tr>
+</table>
+{% endif %}
